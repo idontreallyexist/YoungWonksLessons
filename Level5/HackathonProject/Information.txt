@@ -1,0 +1,17 @@
+Please make sure you have the following modules downloaded on VS Code before running:
+Numpy
+Pandas
+Streamlit
+
+After unzipping the folder, open the entire unzipped folder with VS code
+
+LunarVisualizer.py includes the actual application
+DataFormatter.py generates the Nobile1.csv file from the files in the data folder
+
+As LunarVisualizer.py uses streamlit, it cannot be run by pressing the run button
+Instead, the project must be run directly from the terminal using the following command:
+-m streamlit run LunarVisualizer.py
+
+If the above command doesn't work, try typing the file path to python, then running the command
+Example: C:/Users/charl/AppData/Local/Programs/Python/Python312/python.exe -m streamlit run LunarVisualizer.py
+

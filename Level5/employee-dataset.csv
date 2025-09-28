@@ -1,0 +1,20 @@
+Employee ID,Name,Age,Gender,Department,Manager,Salary,Country
+1001,Finn,21,Male,Marketing,Jeff,10000,USA
+1002,Alan,24,Male,Sales,Jeff,9000,USA
+1003,Chanel,21,Male,Marketing,Mike,9000,Australia
+1004, Olivia,27,Female,IT,Richie,7800,India
+1005,Harmen,35,Female,IT,Richie,7800,India
+1006,Marisol,53,Female,HR,Alan,10000,UK
+1007,Kane,38,Male,IT,Henricky,8500,New Zealand
+1008,Alaina,38,Female,IT,Henricky,8500,India
+1009,Marsh,21,Male,Sales,Mike,10000,USA
+1010,Rose,30,Female,Marketing,Mike,9500,India
+1011,Ariel,27,Male,IT,Henricky,6500,USA
+1012,Louis,39,Male,IT,Richie,6500,Australia
+1013,Isabel,44,Female,HR,Alan,1000,Australia
+1014,Ryan,27,Male,Sales,Jeff,9000,India
+1015,Kaya,36,Female,Marketing,Jeff,10000,USA
+1016,Masen,32,Male,Marketing,Jeff,9000,New Zealand
+1017,Stokes,31,Male,Sales,Mike,9000,UK
+1018,Erin,42,Male,HR,Alan,10000,USA
+1019,Reuben,49,Male,IT,Henricky,8500,USA

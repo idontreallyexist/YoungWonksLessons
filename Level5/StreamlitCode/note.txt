@@ -1,0 +1,17 @@
+run these files with C:/Users/charl/AppData/Local/Programs/Python/Python312/python.exe -m streamlit run StreamlitCode/[File name]
+
+Hackathon (August 16/17) 
+Theme: Space Exploration and NASA
+|||IDEAS|||
+Solar System Visualizer (2D)
+Make and plot a satelite's path (Would require a solar system)
+Data visualization with Tensorflow (Download prior NASA ADC data)
+
+
+For NASA ADC 2026 Team
+Congressional Lab Development Challenge
+USACO
+The Andover Computer Open (TACO)
+
+plotlydash
+Grokking Algorithms
