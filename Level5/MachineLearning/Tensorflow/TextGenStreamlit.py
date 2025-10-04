@@ -8,16 +8,20 @@ from joblib import dump, load
 import tensorflow as tf
 from keras import models, layers
 import keras
+import tensorflow_datasets as tfds
 
-@keras.saving.register_keras_serializable()
+@keras.saving.register_keras_serializable(package='my_package')
 class MyModel(tf.keras.Model):
-  def __init__(self, vocab_size, embedding_dim, rnn_units):
+  def __init__(self, vocab_size, embedding_dim, rnn_units, **kwargs):
     super().__init__()
     self.embedding = tf.keras.layers.Embedding(vocab_size, embedding_dim)
     self.gru = tf.keras.layers.GRU(rnn_units,
                                    return_sequences=True,
                                    return_state=True)
     self.dense = tf.keras.layers.Dense(vocab_size)
+    self.vocab_size = vocab_size
+    self.embedding_dim = embedding_dim
+    self.rnn_units = rnn_units
 
   def call(self, inputs, states=None, return_state=False, training=False):
     x = inputs
@@ -31,10 +35,23 @@ class MyModel(tf.keras.Model):
       return x, states
     else:
       return x
+  
+  def get_config(self):
+        config = super().get_config()
+        config.update({
+            "vocab_size": self.vocab_size,
+            "embedding_dim": self.embedding_dim,
+            "rnn_units": self.rnn_units,
+        })
+        return config
 
-@keras.saving.register_keras_serializable()
+  @classmethod
+  def from_config(cls,config):
+    return cls(**config)
+
+@keras.saving.register_keras_serializable(package='my_package2')
 class OneStep(tf.keras.Model):
-  def __init__(self, model, chars_from_ids, ids_from_chars, temperature=1.0):
+  def __init__(self, model, chars_from_ids, ids_from_chars, temperature=1.0, **kwargs):
     super().__init__()
     self.temperature = temperature
     self.model = model
@@ -77,14 +94,34 @@ class OneStep(tf.keras.Model):
     # Return the characters and model state.
     return predicted_chars, states
 
+  def get_config(self):
+        config = super().get_config()
+        config.update({
+            "model": self.model,
+            "chars_from_ids": self.chars_from_ids,
+            "ids_from_chars": self.ids_from_chars,
+            "temperature": self.temperature,
+        })
+        return config
+
+  @classmethod
+  def from_config(cls, config):
+        model = keras.saving.deserialize_keras_object(config.pop("model"))
+        chars_from_ids = keras.saving.deserialize_keras_object(config.pop("chars_from_ids"))
+        ids_from_chars = keras.saving.deserialize_keras_object(config.pop("ids_from_chars"))
+        return cls(model=model,
+                   chars_from_ids=chars_from_ids,
+                   ids_from_chars=ids_from_chars,
+                   **config)
+
 @st.cache_resource
 def load_model():
-    return models.load_model('C:/Users/charl/Downloads/Level5/MachineLearning/Tensorflow/TextGen.keras')
+    return models.load_model('C:/Users/charl/Downloads/Github/YoungWonksLessons/Level5/MachineLearning/Tensorflow/News.keras')
 
-path_to_file = tf.keras.utils.get_file('shakespeare.txt', 'https://storage.googleapis.com/download.tensorflow.org/data/shakespeare.txt')
-text = open(path_to_file, 'rb').read().decode(encoding='utf-8')
+df = tfds.load('ag_news_subset', split='train', shuffle_files=True, download=False)
+text=tfds.as_dataframe(df.take(10000))['title'].to_string()
 print(f'Length of text: {len(text)} characters')
-vocab = sorted(set(text))
+vocab = ['\n', ' ', '!', '$', '&', "'", ',', '-', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 model=load_model()
 ids_from_chars = tf.keras.layers.StringLookup(
     vocabulary=list(vocab), mask_token=None)
@@ -95,15 +132,12 @@ one_step_model = OneStep(model, chars_from_ids, ids_from_chars)
 text_prompt=st.text_input("Type Prompt Here")
 
 if st.button("Generate"):
-    tf.saved_model.save(one_step_model, 'one_step')
-    one_step_reloaded = tf.saved_model.load('one_step')
-
     states = None
     next_char = tf.constant([text_prompt])
     result = [next_char]
 
     for n in range(100):
-        next_char, states = one_step_reloaded.generate_one_step(next_char, states=states)
+        next_char, states = one_step_model.generate_one_step(next_char, states=states)
         result.append(next_char)
 
     text=tf.strings.join(result)[0].numpy().decode("utf-8")
