@@ -11,7 +11,9 @@ blenderbot = AutoModelForSeq2SeqLM.from_pretrained("facebook/blenderbot-400M-dis
 
 def generate_text(text,model,tokenizer):
     input = tokenizer.encode(text, return_tensors="pt")
-    output = model.generate(input, max_length=100, do_sample=True, pad_token_id=tokenizer.eos_token_id)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    output = model.generate(input, do_sample=True, pad_token_id=tokenizer.pad_token_id, max_new_tokens=200)
     return tokenizer.decode(output[0], skip_special_tokens=True)
 
 option = st.selectbox(
