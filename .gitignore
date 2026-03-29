@@ -88,6 +88,7 @@ Latitude.csv
 Longitude.csv
 Slope.csv
 song_lyrics.csv
+spa.txt
 
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
